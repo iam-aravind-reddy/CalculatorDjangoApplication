@@ -1,0 +1,20 @@
+FROM centos:latest AS Build
+
+WORKDIR /project
+
+COPY calculator /project
+COPY requirements.txt /project
+
+#multi stage docker build
+
+FROM python:3.8-slim
+
+COPY --from=Build /project /project
+
+WORKDIR /project
+
+RUN pip install -r requirements.txt
+
+ENTRYPOINT ["python3"]
+
+CMD ["manage.py", "runserver", "0.0.0.0:8000"]
